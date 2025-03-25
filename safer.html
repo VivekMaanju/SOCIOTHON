@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeWeb - Women Safety Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --secondary: #ff758f;
+            --dark: #343a40;
+            --light: #f8f9fa;
+            --danger: #dc3545;
+            --success: #28a745;
+            --warning: #ffc107;
+            --info: #17a2b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--dark);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .hero {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            background: linear-gradient(135deg, #fff1f1 0%, #ffffff 100%);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            color: #555;
+        }
+
+        .features {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .section-title p {
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .feature-card p {
+            color: #666;
+        }
+
+        .sos-section {
+            background-color: var(--primary);
+            color: white;
+            margin-top: 80px;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .sos-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .sos-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sos-section p {
+            margin-bottom: 2rem;
+        }
+
+        .sos-btn {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: white;
+            color: var(--danger);
+            font-size: 1.5rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .sos-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .sos-btn.active {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(255, 255, 255, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+            }
+        }
+        *{
+            text-decoration: none;
+        }
+        .map-section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Adjusted map styling to a fixed height so it stays within the section */
+        #map {
+            height: 500px;
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+
+        .custom-zoom {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .custom-zoom button {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .contact {
+            background-color: #f8f9fa;
+            padding: 4rem 2rem;
+        }
+
+        .contact-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .contact-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .contact-info p {
+            margin-bottom: 1rem;
+            color: #666;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .contact-form textarea {
+            height: 150px;
+        }
+
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links li {
+            margin: 0 1rem;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .social-icons {
+            margin-bottom: 1rem;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .social-icons a:hover {
+            color: var(--primary);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .nav-links {
+                margin-top: 1rem;
+            }
+
+            .nav-links li {
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+
+            .hero {
+                padding: 6rem 1rem 3rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            animation: modalopen 0.5s;
+        }
+
+        @keyframes modalopen {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .emergency-contacts {
+            margin-top: 1rem;
+        }
+
+        .emergency-contacts button {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: left;
+            padding-left: 1rem;
+        }
+
+        .emergency-contacts button i {
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="#" class="logo">Safe<span>Web</span></a>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="route.html">Safety Map</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#" class="btn btn-outline">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="sos-section">
+        <div class="sos-container">
+            <h2>Emergency SOS Button</h2>
+            <p>In case of emergency, press and hold the button below to alert authorities and your trusted contacts with your exact location.</p>
+            <button class="sos-btn" id="sosButton">SOS</button>
+            <p class="sos-instructions">Press and hold for 3 seconds to activate</p>
+        </div>
+    </section>
+
+    <section class="hero">
+        <h1>Your Safety, Our Priority</h1>
+        <p>SafeWeb is an innovative platform designed to empower women with real-time safety information, emergency alerts, and community support.</p>
+        <a href="#" class="btn">Get Started</a>
+    </section>
+
+    <section class="features" id="features">
+        <div class="section-title">
+            <h2>How SafeWeb Protects You</h2>
+            <p>Our comprehensive features ensure you're always safe and connected</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <a href="realtime.html" target="_blank"><div class="feature-icon">
+                    <i class="fas fa-map-marked-alt"></i>
+                </div>
+                <h3>Real-Time Safety Map</h3>
+                <p>View high-risk areas in your location with our crowd-sourced danger zone heatmap.</p>
+            </div></a>
+            <div class="feature-card">
+                <a href="route.html" target="_blank"><div class="feature-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <h3>Instant SOS Alerts</h3>
+                <p>One-tap emergency button notifies authorities and trusted contacts with your location.</p>
+            </div></a>
+            <div class="feature-card">
+                <a href="new.html" target="_blank"><div class="feature-icon">
+                    <i class="fas fa-route"></i>
+                </div>
+                <h3>Safe Route Navigation</h3>
+                <p>Get voice-guided directions that avoid dangerous areas and suggest well-lit paths.</p>
+            </div></a>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Guardian Network</h3>
+                <p>Connect with verified community members who can assist in emergencies.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3>AI Risk Prediction</h3>
+                <p>Our system analyzes patterns to warn you about potential threats in advance.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-drone-alt"></i>
+                </div>
+                <h3>Drone Response</h3>
+                <p>In partnership with local authorities, drones can be dispatched to emergency locations.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="map-section" id="safety-map">
+        <div class="section-title">
+            <h2>Safety Heatmap</h2>
+            <p>View real-time safety information for your area</p>
+        </div>
+        <!-- Map container (Leaflet) -->
+        <div id="map"></div>
+        <!--  -->
+    </section>
+
+    <section class="contact" id="contact">
+        <div class="contact-container">
+            <div class="contact-info">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-envelope"></i> contact@safeweb.org</p>
+                <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                <p><i class="fas fa-map-marker-alt"></i> 123 Safety Ave, Secure City</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+            <div class="contact-form">
+                <h3>Send us a message</h3>
+                <form id="contactForm">
+                    <input type="text" placeholder="Your Name" required>
+                    <input type="email" placeholder="Your Email" required>
+                    <input type="text" placeholder="Subject">
+                    <textarea placeholder="Your Message" required></textarea>
+                    <button type="submit" class="btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <ul class="footer-links">
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">About Us</a></li>
+        </ul>
+        <p>&copy; 2023 SafeWeb. All rights reserved.</p>
+    </footer>
+
+    <!-- Emergency Modal -->
+    <div id="emergencyModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Emergency Alert Activated!</h2>
+            <p>Help is on the way. Your location has been shared with emergency contacts.</p>
+            <div class="emergency-contacts">
+                <button id="callPolice"><i class="fas fa-phone"></i> Call Local Police</button>
+                <button id="callTrusted1"><i class="fas fa-user-friends"></i> Call Trusted Contact 1</button>
+                <button id="callTrusted2"><i class="fas fa-user-friends"></i> Call Trusted Contact 2</button>
+            </div>
+            <p id="locationStatus"><i class="fas fa-spinner fa-spin"></i> Sharing your location...</p>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script>
+        let map, marker;
+        
+        // Function to initialize the map
+        function initMap(lat, lng) {
+            map = L.map('map').setView([lat, lng], 15);
+
+            // Load OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Add marker at current location
+            marker = L.marker([lat, lng]).addTo(map)
+                .bindPopup('Your Location')
+                .openPopup();
+        }
+
+        // Update location if needed (e.g., for real-time tracking)
+        function updateLocation(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            if (!map) {
+                initMap(lat, lng);
+            } else {
+                marker.setLatLng([lat, lng]);
+                map.setView([lat, lng]);
+            }
+        }
+
+        // Error handler for geolocation
+        function locationError(error) {
+            console.error("Location error:", error);
+            alert("Unable to detect your location. Please enable location services.");
+        }
+
+        // Get current position from browser
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(updateLocation, locationError);
+            // For continuous tracking:
+            // navigator.geolocation.watchPosition(updateLocation, locationError);
+        } else {
+            alert("Geolocation is not supported by your browser.");
+        }
+
+        // Custom zoom buttons
+        document.getElementById('zoomIn').addEventListener('click', function() {
+            map.zoomIn();
+        });
+        document.getElementById('zoomOut').addEventListener('click', function() {
+            map.zoomOut();
+        });
+    </script>
+
+<script>
+    // SOS Button Functionality
+    const sosButton = document.getElementById('sosButton');
+    const emergencyModal = document.getElementById('emergencyModal');
+    const closeModal = document.querySelector('.close-modal');
+    let pressTimer;
+    let isSosActive = false;
+
+    sosButton.addEventListener('mousedown', startSosTimer);
+    sosButton.addEventListener('touchstart', startSosTimer);
+    
+    sosButton.addEventListener('mouseup', cancelSosTimer);
+    sosButton.addEventListener('mouseleave', cancelSosTimer);
+    sosButton.addEventListener('touchend', cancelSosTimer);
+
+    function startSosTimer() {
+        pressTimer = window.setTimeout(() => {
+            activateSos();
+        }, 3000);
+    }
+
+    function cancelSosTimer() {
+        if (pressTimer) {
+            window.clearTimeout(pressTimer);
+        }
+    }
+
+    function activateSos() {
+        if (!isSosActive) {
+            isSosActive = true;
+            sosButton.classList.add('active');
+            emergencyModal.style.display = 'block';
+            
+            // Use Geolocation API to fetch live location and generate dynamic map link
+            setTimeout(() => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        // Dynamic Google Maps link
+                        const dynamicLink = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+                        document.getElementById('locationStatus').innerHTML = 
+                            `<i class="fas fa-check-circle"></i> Location shared: <a href="${dynamicLink}" target="_blank">Your Live Location</a>`;
+                    }, (error) => {
+                        console.error("Error getting location: ", error);
+                        document.getElementById('locationStatus').innerHTML = 
+                            `<i class="fas fa-exclamation-triangle"></i> Unable to get live location.`;
+                    });
+                } else {
+                    document.getElementById('locationStatus').innerHTML = 
+                        `<i class="fas fa-exclamation-triangle"></i> Geolocation not supported.`;
+                }
+            }, 2000);
+            
+            console.log('SOS ACTIVATED - Sending alerts...');
+        }
+    }
+
+    closeModal.addEventListener('click', () => {
+        emergencyModal.style.display = 'none';
+        isSosActive = false;
+        sosButton.classList.remove('active');
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target === emergencyModal) {
+            emergencyModal.style.display = 'none';
+            isSosActive = false;
+            sosButton.classList.remove('active');
+        }
+    });
+
+    // Emergency contact buttons
+    document.getElementById('callPolice').addEventListener('click', () => {
+        alert('Calling local police...');
+        // In a real app: window.location.href = 'tel:911';
+    });
+
+    document.getElementById('callTrusted1').addEventListener('click', () => {
+        alert('Calling Trusted Contact 1...');
+    });
+
+    document.getElementById('callTrusted2').addEventListener('click', () => {
+        alert('Calling Trusted Contact 2...');
+    });
+
+    // Contact form submission
+    document.getElementById('contactForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('Thank you for your message! We will get back to you soon.');
+        e.target.reset();
+    });
+
+    // Shake detection for mobile (optional)
+    if (window.DeviceMotionEvent) {
+        let lastUpdate = 0;
+        const threshold = 15; // Shake sensitivity
+        let isShaking = false;
+        
+        window.addEventListener('devicemotion', (e) => {
+            const acceleration = e.accelerationIncludingGravity;
+            const curTime = new Date().getTime();
+            
+            if ((curTime - lastUpdate) > 100) {
+                const diffTime = curTime - lastUpdate;
+                lastUpdate = curTime;
+                
+                const speed = Math.abs(acceleration.x + acceleration.y + acceleration.z - 9.81) * 10000 / diffTime;
+                
+                if (speed > threshold && !isSosActive) {
+                    isShaking = true;
+                    activateSos();
+                }
+            }
+        }, false);
+    }
+</script>
+
+</body>
+</html>

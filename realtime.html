@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <title>Women Safety Map - Real-Time Location</title>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <style>
+    /* Map container ka style */
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+    /* Custom button styling agar aap additional controls add karna chahein */
+    .custom-zoom {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 1000;
+    }
+    .custom-zoom button {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Map container -->
+  <div id="map"></div>
+
+  <!-- Optional custom zoom controls -->
+  <div class="custom-zoom">
+    <button id="zoomIn">+</button>
+    <button id="zoomOut">-</button>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <script>
+    let map, marker;
+
+    // Function to initialize the map
+    function initMap(lat, lng) {
+      // Map create karna, user ke location ke saath center ho
+      map = L.map('map').setView([lat, lng], 15);
+
+      // OpenStreetMap tiles load karna
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      // Marker add karna current location par
+      marker = L.marker([lat, lng]).addTo(map)
+        .bindPopup('loction')
+        .openPopup();
+
+      // Leaflet ke default zoom controls already enabled hote hain.
+    }
+
+    // Function to update user's marker (agar real-time tracking chahiye)
+    function updateLocation(position) {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      if (!map) {
+        // Agar map initialize nahi hua, toh initialize karo
+        initMap(lat, lng);
+      } else {
+        // Marker ko update karo
+        marker.setLatLng([lat, lng]);
+        // Map center ko update karo
+        map.setView([lat, lng]);
+      }
+    }
+
+    // Error handler for geolocation
+    function locationError(error) {
+      console.error("Location error:", error);
+      alert("Aapki location detect nahi ho pa rahi. Kripya location permission enable karein.");
+    }
+
+    // Browser ke geolocation API se current position lein
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(updateLocation, locationError);
+      
+      // Agar aap continuous tracking chahte hain:
+      // navigator.geolocation.watchPosition(updateLocation, locationError);
+    } else {
+      alert("Geolocation is not supported by your browser.");
+    }
+
+    // Custom zoom buttons functionality (optional)
+    document.getElementById('zoomIn').addEventListener('click', function() {
+      map.zoomIn();
+    });
+    document.getElementById('zoomOut').addEventListener('click', function() {
+      map.zoomOut();
+    });
+  </script>
+</body>
+</html>

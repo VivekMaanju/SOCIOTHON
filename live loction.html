@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Real-Time Map Integration</title>
+  <style>
+    /* Map container style */
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <!-- Map Container -->
+  <div id="map"></div>
+
+  <!-- Google Maps API Script -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
+  <script>
+    let map;
+    let marker;
+
+    // Function to initialize the map
+    function initMap() {
+      // Default center location (example: New Delhi)
+      const initialLocation = { lat: 28.6139, lng: 77.2090 };
+
+      // Create the map
+      map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 12,
+        center: initialLocation,
+      });
+
+      // Create a marker at the initial location
+      marker = new google.maps.Marker({
+        position: initialLocation,
+        map: map,
+        title: "Current Location",
+      });
+    }
+
+    // Function to simulate real-time marker update
+    function updateMarkerPosition() {
+      // Yahan aap apne real-time data source se new coordinates le sakte hain.
+      // Yeh sirf ek simulation hai.
+      const newLat = marker.getPosition().lat() + (Math.random() - 0.5) * 0.01;
+      const newLng = marker.getPosition().lng() + (Math.random() - 0.5) * 0.01;
+      const newPosition = { lat: newLat, lng: newLng };
+
+      // Update marker position
+      marker.setPosition(newPosition);
+      // Optionally, recenter the map to the new marker location
+      map.setCenter(newPosition);
+    }
+
+    // Initialize map on window load
+    window.onload = function() {
+      initMap();
+      // Simulate real-time updates every 3 seconds
+      setInterval(updateMarkerPosition, 3000);
+    }
+  </script>
+</body>
+</html>

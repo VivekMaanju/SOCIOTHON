@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Safe Route & SOS Demo</title>
+  <!-- Leaflet CSS (if needed) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <!-- Leaflet Routing Machine CSS (if needed) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    /* Global Reset and Styling */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    body {
+      background: #f0f0f0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #222;
+    }
+    .info {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+      color: #555;
+    }
+    /* SOS Button */
+    .sos-btn {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: #fff;
+      color: #dc3545;
+      font-size: 2rem;
+      font-weight: bold;
+      border: 2px solid #dc3545;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: block;
+      margin: 40px auto;
+    }
+    .sos-btn:hover {
+      transform: scale(1.05);
+    }
+    .sos-btn.active {
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(220,53,69,0.7); }
+      70% { box-shadow: 0 0 0 20px rgba(220,53,69,0); }
+      100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); }
+    }
+    /* Modal styling */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    .modal-content h2 {
+      margin-bottom: 20px;
+      color: #dc3545;
+    }
+    .modal-content p {
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+    }
+    .close-modal {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #333;
+    }
+    .emergency-contacts {
+      margin-bottom: 20px;
+    }
+    .emergency-contacts button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      background: #dc3545;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .emergency-contacts button:hover {
+      background: #c82333;
+    }
+    .location-status {
+      font-size: 0.95rem;
+      color: #555;
+    }
+    /* Countdown Timer styling */
+    .countdown-timer {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #dc3545;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>SOS BUTTON</h1>
+  <p class="info">
+    Press and hold the SOS button for 3 seconds or shake your device to activate emergency alerts.
+    Once activated, you have 1 minute to cancel before an alert is sent.
+  </p>
+
+  <!-- SOS Button -->
+  <button class="sos-btn" id="sosButton">SOS</button>
+
+  <!-- Emergency Modal -->
+  <div id="emergencyModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2>Emergency Alert Activated!</h2>
+      <p>Your location will be sent to your trusted contact. If no response is received within 5 minutes, your location will be escalated to local police and the women safety helpline.</p>
+      <div class="countdown-timer" id="countdownTimer">60</div>
+      <div class="emergency-contacts">
+        <button id="callPolice"><i class="fas fa-phone"></i>Call Local Police</button>
+        <button id="callTrusted1"><i class="fas fa-user-friends"></i>Call Trusted Contact 1</button>
+        <button id="callTrusted2"><i class="fas fa-user-friends"></i>Call Trusted Contact 2</button>
+      </div>
+      <p class="location-status" id="locationStatus">
+        <i class="fas fa-spinner fa-spin"></i> Sharing your location...
+      </p>
+    </div>
+  </div>
+
+  <!-- Include necessary JS libraries -->
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Global variable for dynamicLink
+      let dynamicLink = '';
+      
+      // Contact details (replace with actual data)
+      const trustedContactPhone = "+919009149694";
+      const trustedContactEmail = "shivanshti10@gmail.com";
+      const policePhone = "100";
+      const policeEmail = "police@example.com";
+      const womenSafetyHelpline = "1091"; // Example helpline number
+      
+      const sosButton = document.getElementById('sosButton');
+      const emergencyModal = document.getElementById('emergencyModal');
+      const closeModal = document.querySelector('.close-modal');
+      const countdownTimerElem = document.getElementById('countdownTimer');
+      
+      let pressTimer;
+      let isSosActive = false;
+      let trustedAlertTimer; // 1-minute timer before alerting trusted contact
+      let escalationTimer;   // 5-minute timer for escalation
+      let countdownInterval; // For updating the countdown display
+      
+      // Event listeners for SOS button press
+      sosButton.addEventListener('mousedown', startSosTimer);
+      sosButton.addEventListener('touchstart', startSosTimer);
+      sosButton.addEventListener('mouseup', cancelSosTimer);
+      sosButton.addEventListener('mouseleave', cancelSosTimer);
+      sosButton.addEventListener('touchend', cancelSosTimer);
+      
+      function startSosTimer() {
+        pressTimer = window.setTimeout(() => { activateSos(); }, 3000);
+      }
+      
+      function cancelSosTimer() {
+        if (pressTimer) { window.clearTimeout(pressTimer); }
+      }
+      
+      function activateSos() {
+        if (!isSosActive) {
+          isSosActive = true;
+          sosButton.classList.add('active');
+          emergencyModal.style.display = 'flex';
+          
+          // Start the countdown timer (60 seconds)
+          let remainingTime = 60;
+          countdownTimerElem.textContent = remainingTime;
+          countdownInterval = setInterval(() => {
+            remainingTime--;
+            countdownTimerElem.textContent = remainingTime;
+            if (remainingTime <= 0) {
+              clearInterval(countdownInterval);
+            }
+          }, 1000);
+          
+          // Fetch live location using Geolocation API
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+              const lat = position.coords.latitude;
+              const lng = position.coords.longitude;
+              dynamicLink = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+              document.getElementById('locationStatus').innerHTML =
+                `<i class="fas fa-check-circle"></i> Location ready: <a href="${dynamicLink}" target="_blank" rel="noopener noreferrer">View Live Location</a>`;
+              
+              // Set a 1-minute timer before alerting the trusted contact
+              trustedAlertTimer = setTimeout(() => {
+                window.location.href = `tel:${trustedContactPhone}`;
+                window.open(`mailto:${trustedContactEmail}?subject=SOS Alert&body=Alert! My current location is: ${dynamicLink}`, '_blank');
+                alert("Alert sent to your trusted contact.");
+              }, 60000); // 1 minute
+              
+              // Set a 5-minute escalation timer if no response from trusted contact
+              escalationTimer = setTimeout(() => {
+                window.location.href = `tel:${policePhone}`;
+                window.open(`mailto:${policeEmail}?subject=SOS Alert - No Response&body=No response received. My location is: ${dynamicLink}`, '_blank');
+                window.location.href = `tel:${womenSafetyHelpline}`;
+                alert("No response from trusted contact. Alert escalated to police and women safety helpline.");
+              }, 300000); // 5 minutes
+              
+            }, (error) => {
+              console.error("Error getting location:", error);
+              document.getElementById('locationStatus').innerHTML =
+                `<i class="fas fa-exclamation-triangle"></i> Unable to get live location.`;
+            });
+          } else {
+            document.getElementById('locationStatus').innerHTML =
+              `<i class="fas fa-exclamation-triangle"></i> Geolocation not supported.`;
+          }
+          console.log('SOS ACTIVATED - Waiting for cancellation...');
+        }
+      }
+      
+      // Modal close events (to cancel SOS)
+      closeModal.addEventListener('click', () => {
+        emergencyModal.style.display = 'none';
+        isSosActive = false;
+        sosButton.classList.remove('active');
+        if (trustedAlertTimer) { clearTimeout(trustedAlertTimer); }
+        if (escalationTimer) { clearTimeout(escalationTimer); }
+        if (countdownInterval) { clearInterval(countdownInterval); }
+      });
+      window.addEventListener('click', (event) => {
+        if (event.target === emergencyModal) {
+          emergencyModal.style.display = 'none';
+          isSosActive = false;
+          sosButton.classList.remove('active');
+          if (trustedAlertTimer) { clearTimeout(trustedAlertTimer); }
+          if (escalationTimer) { clearTimeout(escalationTimer); }
+          if (countdownInterval) { clearInterval(countdownInterval); }
+        }
+      });
+      
+      // Manual emergency contact button handlers
+      document.getElementById('callPolice').addEventListener('click', () => {
+        window.location.href = `tel:${policePhone}`;
+      });
+      document.getElementById('callTrusted1').addEventListener('click', () => {
+        window.location.href = `tel:${trustedContactPhone}`;
+        window.open(`mailto:${trustedContactEmail}?subject=SOS Alert&body=My current location is: ${dynamicLink}`, '_blank');
+      });
+      document.getElementById('callTrusted2').addEventListener('click', () => {
+        window.location.href = `tel:+919876543210`;
+      });
+    });
+  </script>
+</body>
+</html>
