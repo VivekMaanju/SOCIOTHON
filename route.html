@@ -62,13 +62,33 @@
       text-align: center;
       margin-bottom: 0.5rem;
     }
+    .safety-score {
+      text-align: center;
+      margin: 1rem auto;
+      padding: 0.5rem;
+      max-width: 400px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .safe {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .moderate {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    .unsafe {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
   </style>
 </head>
 <body>
   <h1>Safe Route Demo</h1>
   <p class="info">
     <small>
-      Note: True “safe routing” would require additional data (crime, unsafe areas) and custom logic.
+      Note: True "safe routing" would require additional data (crime, unsafe areas) and custom logic.
     </small>
   </p>
 
@@ -82,6 +102,9 @@
     <!-- Button to find route -->
     <button id="findRouteBtn">Find Route</button>
   </div>
+
+  <!-- Safety score display -->
+  <div id="safetyScore" class="safety-score" style="display: none;"></div>
 
   <!-- Map container -->
   <div id="map"></div>
@@ -141,7 +164,8 @@
         // Take the first result
         return {
           lat: parseFloat(data[0].lat),
-          lng: parseFloat(data[0].lon)
+          lng: parseFloat(data[0].lon),
+          display_name: data[0].display_name
         };
       } else {
         throw new Error("Address not found.");
@@ -180,6 +204,53 @@
       }).addTo(map);
     }
 
+    // 5. Get safety score for a location (mock function)
+    function getSafetyScore(location) {
+      // In a real app, this would call an API with crime data, lighting info, etc.
+      // For demo purposes, we'll generate a random score with some location-based variation
+      
+      // Seed the random number generator with location coordinates for consistency
+      const seed = (location.lat * 1000 + location.lng * 1000) % 1000;
+      const random = (seed * 9301 + 49297) % 233280;
+      const normalized = random / 233280;
+      
+      // Base score (0-100)
+      let score = Math.floor(normalized * 100);
+      
+      // Adjust slightly based on urban/rural (using absolute latitude as proxy)
+      const isUrban = Math.abs(location.lat) > 20 && Math.abs(location.lat) < 50;
+      score += isUrban ? -10 : 15;
+      
+      // Ensure score is within bounds
+      score = Math.max(10, Math.min(90, score));
+      
+      return score;
+    }
+
+    // 6. Display safety information
+    function displaySafetyInfo(locationName, score) {
+      const safetyElement = document.getElementById("safetyScore");
+      safetyElement.style.display = "block";
+      
+      let safetyClass = "moderate";
+      let safetyText = "Moderately Safe";
+      
+      if (score >= 70) {
+        safetyClass = "safe";
+        safetyText = "Very Safe";
+      } else if (score <= 40) {
+        safetyClass = "unsafe";
+        safetyText = "Less Safe";
+      }
+      
+      safetyElement.className = `safety-score ${safetyClass}`;
+      safetyElement.innerHTML = `
+        <div>Safety Score for ${locationName}: <strong>${score}/100</strong></div>
+        <div>${safetyText} area</div>
+        <small>Note: This is a simulated score for demonstration only</small>
+      `;
+    }
+
     // Initialize the map on page load
     initMap();
 
@@ -200,6 +271,16 @@
         
         // 3) Show route
         showRoute(userLoc, destLoc);
+        
+        // 4) Get and display safety score
+        const safetyScore = getSafetyScore(destLoc);
+        displaySafetyInfo(destLoc.display_name || destAddress, safetyScore);
+        
+        // Center map on the route
+        map.fitBounds([
+          [userLoc.lat, userLoc.lng],
+          [destLoc.lat, destLoc.lng]
+        ]);
       } catch (err) {
         alert("Error: " + err.message || err);
       }
