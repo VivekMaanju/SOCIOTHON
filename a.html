@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeWeb - Safety Prediction</title>
+    <style>
+        /* Previous CSS remains unchanged */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        /* ... (keep all previous styles) ... */
+        
+        .feature-inputs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .feature-inputs input {
+            width: 100%;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>SafeWeb</h1>
+        <nav>
+            <ul>
+                <li><a href="#">Features</a></li>
+                <li><a href="#">Safety Map</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="sos-container">
+        <h2>Emergency SOS Button</h2>
+        <button class="sos-button">SOS</button>
+        <p>Press and hold for 3 seconds to activate</p>
+    </section>
+
+    <main>
+        <section class="prediction-section">
+            <h2>Safety Prediction</h2>
+            <div class="feature-inputs">
+                <input type="number" id="crime_rate" placeholder="Crime Rate (0-100)">
+                <input type="number" id="street_lights" placeholder="Street Lights per km">
+                <input type="number" id="population" placeholder="Population Density">
+                <input type="number" id="emergency" placeholder="Emergency Services">
+            </div>
+            <button onclick="predictSafety()">Check Safety</button>
+            <p id="result"></p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 SafeWeb. All rights reserved.</p>
+    </footer>
+
+    <script>
+        async function predictSafety() {
+            const inputs = {
+                crime_rate: parseFloat(document.getElementById("crime_rate").value),
+                street_lights: parseFloat(document.getElementById("street_lights").value),
+                population: parseFloat(document.getElementById("population").value),
+                emergency: parseFloat(document.getElementById("emergency").value)
+            };
+
+            const resultElement = document.getElementById("result");
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(inputs)
+                });
+
+                const data = await response.json();
+                
+                if (data.prediction !== undefined) {
+                    const safetyLevel = data.prediction > 70 ? 'Safe 🟢' : 
+                                     data.prediction > 40 ? 'Moderate 🟡' : 'Unsafe 🔴';
+                    resultElement.innerHTML = `Safety Score: ${data.prediction.toFixed(1)}/100<br>${safetyLevel}`;
+                    resultElement.style.color = safetyLevel.includes('🟢') ? '#2ecc71' : 
+                                              safetyLevel.includes('🟡') ? '#f1c40f' : '#e74c3c';
+                } else {
+                    resultElement.innerText = "Error in prediction";
+                }
+            } catch (error) {
+                resultElement.innerText = "Error retrieving data. Please try again.";
+            }
+        }
+    </script>
+</body>
+</html>
