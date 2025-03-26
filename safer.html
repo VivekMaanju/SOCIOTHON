@@ -195,46 +195,126 @@
             text-align: center;
         }
 
-        .sos-container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
+         /* SOS Section */
+    .sos-section {
+      background-color: var(--primary);
+      color: white;
+      margin-top: 80px;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+    .sos-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .sos-container h2 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .sos-container p {
+      margin-bottom: 2rem;
+    }
+    .sos-btn {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background-color: white;
+      color: var(--danger);
+      font-size: 1.5rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+    .sos-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+    .sos-btn.active {
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
+      70% { box-shadow: 0 0 0 15px rgba(255,255,255,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+    }
 
-        .sos-section h2 {
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .sos-section p {
-            margin-bottom: 2rem;
-        }
-
-        .sos-btn {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background-color: white;
-            color: var(--danger);
-            font-size: 1.5rem;
-            font-weight: 700;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto;
-        }
-
-        .sos-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        .sos-btn.active {
-            animation: pulse 1.5s infinite;
-        }
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999; /* Ensure it's on top of everything */
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: white;
+      margin: auto;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      position: relative;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      animation: modalopen 0.5s;
+      text-align: center;
+    }
+    @keyframes modalopen {
+      from { opacity: 0; transform: translateY(-50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .close-modal {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--dark);
+    }
+    .emergency-contacts {
+      margin-top: 1rem;
+    }
+    .emergency-contacts button {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      background-color: var(--danger);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-align: left;
+      padding-left: 1rem;
+      transition: background 0.3s ease;
+    }
+    .emergency-contacts button:hover {
+      background-color: #c82333;
+    }
+    .emergency-contacts button i {
+      margin-right: 0.5rem;
+    }
+    .location-status {
+      margin-top: 1rem;
+      font-size: 0.95rem;
+      color: #555;
+    }
+    .countdown-timer {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--danger);
+      margin-bottom: 10px;
+    }
 
         @keyframes pulse {
             0% {
@@ -464,16 +544,37 @@
             </ul>
         </nav>
     </header>
-
     <section class="sos-section">
-        <div class="sos-container">
-            <h2>Emergency SOS Button</h2>
-            <p>In case of emergency, press and hold the button below to alert authorities and your trusted contacts with your exact location.</p>
-            <button class="sos-btn" id="sosButton">SOS</button>
-            <p class="sos-instructions">Press and hold for 3 seconds to activate</p>
-        </div>
+        <h1>Emergency SOS</h1>
+        <p class="info">
+            Press and hold the SOS button for 3 seconds or shake your device to activate emergency alerts.
+            Once activated, you have 1 minute to cancel before an alert is sent.
+        </p>
+        <!-- SOS Button -->
+        <button class="sos-btn" id="sosButton">SOS</button>
     </section>
 
+    <!-- Emergency Modal -->
+    <div id="emergencyModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Emergency Alert Activated!</h2>
+            <p>
+                Your location will be sent to your trusted contact. If no response is received within 5 minutes, 
+                your location will be escalated to local police and the women safety helpline.
+            </p>
+            <!-- Countdown Timer -->
+            <div class="countdown-timer" id="countdownTimer">60</div>
+            <div class="emergency-contacts">
+                <button id="callPolice"><i class="fas fa-phone"></i>Call Local Police</button>
+                <button id="callTrusted1"><i class="fas fa-user-friends"></i>Call Trusted Contact 1</button>
+                <button id="callTrusted2"><i class="fas fa-user-friends"></i>Call Trusted Contact 2</button>
+            </div>
+            <p class="location-status" id="locationStatus">
+                <i class="fas fa-spinner fa-spin"></i> Sharing your location...
+            </p>
+        </div>
+    </div>
     <section class="hero">
         <h1>Your Safety, Our Priority</h1>
         <p>SafeWeb is an innovative platform designed to empower women with real-time safety information, emergency alerts, and community support.</p>
@@ -487,33 +588,33 @@
         </div>
         <div class="features-grid">
             <div class="feature-card">
-                <a href="realtime.html" target="_blank"><div class="feature-icon">
+                <a href="realtime.html" target="_parent"><div class="feature-icon">
                     <i class="fas fa-map-marked-alt"></i>
                 </div>
                 <h3>Real-Time Safety Map</h3>
                 <p>View high-risk areas in your location with our crowd-sourced danger zone heatmap.</p>
             </div></a>
             <div class="feature-card">
-                <a href="route.html" target="_blank"><div class="feature-icon">
+                <a href="new.html" target="_parent"><div class="feature-icon">
                     <i class="fas fa-bell"></i>
                 </div>
                 <h3>Instant SOS Alerts</h3>
                 <p>One-tap emergency button notifies authorities and trusted contacts with your location.</p>
             </div></a>
             <div class="feature-card">
-                <a href="new.html" target="_blank"><div class="feature-icon">
+                <a href="route.html" target="_parent"><div class="feature-icon">
                     <i class="fas fa-route"></i>
                 </div>
                 <h3>Safe Route Navigation</h3>
                 <p>Get voice-guided directions that avoid dangerous areas and suggest well-lit paths.</p>
             </div></a>
             <div class="feature-card">
-                <div class="feature-icon">
+                <a href="g.html" target="_parent"><div class="feature-icon">
                     <i class="fas fa-users"></i>
                 </div>
                 <h3>Guardian Network</h3>
                 <p>Connect with verified community members who can assist in emergencies.</p>
-            </div>
+            </div></a>
             <div class="feature-card">
                 <div class="feature-icon">
                     <i class="fas fa-robot"></i>
@@ -526,6 +627,7 @@
                     <i class="fas fa-drone-alt"></i>
                 </div>
                 <h3>Drone Response</h3>
+                <p><b><strong>!! coming soon !!</b></strong></p>
                 <p>In partnership with local authorities, drones can be dispatched to emergency locations.</p>
             </div>
         </div>
@@ -546,8 +648,8 @@
             <div class="contact-info">
                 <h3>Contact Us</h3>
                 <p><i class="fas fa-envelope"></i> contact@safeweb.org</p>
-                <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
-                <p><i class="fas fa-map-marker-alt"></i> 123 Safety Ave, Secure City</p>
+                <p><i class="fas fa-phone"></i>9009149694</p>
+                <p><i class="fas fa-map-marker-alt"></i> Lpu Compus</p>
                 <div class="social-icons">
                     <a href="#"><i class="fab fa-facebook"></i></a>
                     <a href="#"><i class="fab fa-twitter"></i></a>
@@ -575,7 +677,7 @@
             <li><a href="#">FAQ</a></li>
             <li><a href="#">About Us</a></li>
         </ul>
-        <p>&copy; 2023 SafeWeb. All rights reserved.</p>
+        <p>&copy; 2025 SafeWeb. All rights reserved.</p>
     </footer>
 
     <!-- Emergency Modal -->
@@ -595,177 +697,199 @@
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
-    <script>
-        let map, marker;
-        
-        // Function to initialize the map
-        function initMap(lat, lng) {
-            map = L.map('map').setView([lat, lng], 15);
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+  <script>
+    let map, marker;
 
-            // Load OpenStreetMap tiles
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
-
-            // Add marker at current location
-            marker = L.marker([lat, lng]).addTo(map)
-                .bindPopup('Your Location')
-                .openPopup();
-        }
-
-        // Update location if needed (e.g., for real-time tracking)
-        function updateLocation(position) {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            if (!map) {
-                initMap(lat, lng);
-            } else {
-                marker.setLatLng([lat, lng]);
-                map.setView([lat, lng]);
-            }
-        }
-
-        // Error handler for geolocation
-        function locationError(error) {
-            console.error("Location error:", error);
-            alert("Unable to detect your location. Please enable location services.");
-        }
-
-        // Get current position from browser
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(updateLocation, locationError);
-            // For continuous tracking:
-            // navigator.geolocation.watchPosition(updateLocation, locationError);
-        } else {
-            alert("Geolocation is not supported by your browser.");
-        }
-
-        // Custom zoom buttons
-        document.getElementById('zoomIn').addEventListener('click', function() {
-            map.zoomIn();
-        });
-        document.getElementById('zoomOut').addEventListener('click', function() {
-            map.zoomOut();
-        });
-    </script>
-
-<script>
-    // SOS Button Functionality
-    const sosButton = document.getElementById('sosButton');
-    const emergencyModal = document.getElementById('emergencyModal');
-    const closeModal = document.querySelector('.close-modal');
-    let pressTimer;
-    let isSosActive = false;
-
-    sosButton.addEventListener('mousedown', startSosTimer);
-    sosButton.addEventListener('touchstart', startSosTimer);
-    
-    sosButton.addEventListener('mouseup', cancelSosTimer);
-    sosButton.addEventListener('mouseleave', cancelSosTimer);
-    sosButton.addEventListener('touchend', cancelSosTimer);
-
-    function startSosTimer() {
-        pressTimer = window.setTimeout(() => {
-            activateSos();
-        }, 3000);
+    // Initialize or update map
+    function initOrUpdateMap(lat, lng) {
+      if (!map) {
+        // First time: initialize map
+        map = L.map('map').setView([lat, lng], 18);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+        // Add marker
+        marker = L.marker([lat, lng]).addTo(map)
+          .bindPopup('Your loction')
+          .openPopup();
+      } else {
+        // Update marker & center
+        marker.setLatLng([lat, lng]).openPopup();
+        map.setView([lat, lng], 18);
+      }
     }
 
-    function cancelSosTimer() {
-        if (pressTimer) {
-            window.clearTimeout(pressTimer);
-        }
+    // Callback for geolocation updates
+    function updateLocation(position) {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      console.log('New location:', lat, lng, 'Accuracy:', position.coords.accuracy, 'm');
+      initOrUpdateMap(lat, lng);
     }
 
-    function activateSos() {
+    // Error callback
+    function locationError(error) {
+      console.error("Geolocation error:", error);
+      alert("Could not fetch your location. Check your device settings and permissions.");
+    }
+
+    // Start continuous location tracking
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(updateLocation, locationError, {
+        enableHighAccuracy: true,  // Use GPS if available
+        maximumAge: 0,            // Don't use cached location
+        timeout: 10000            // 10-second timeout (just in case)
+      });
+    } else {
+      alert("Your browser doesn't support geolocation.");
+    }
+</script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Global variable for dynamic link
+      let dynamicLink = '';
+      
+      // Contact details (update with actual data)
+      const trustedContactPhone = "+919009149694";
+      const trustedContactEmail = "shivanshti10@gmail.com";
+      const policePhone = "100";
+      const policeEmail = "police@example.com";
+      const womenSafetyHelpline = "1091"; // Example helpline number
+      
+      const sosButton = document.getElementById('sosButton');
+      const emergencyModal = document.getElementById('emergencyModal');
+      const closeModal = document.querySelector('.close-modal');
+      const countdownTimerElem = document.getElementById('countdownTimer');
+      
+      let pressTimer;
+      let isSosActive = false;
+      let trustedAlertTimer; // 1-minute timer before alerting trusted contact
+      let escalationTimer;   // 5-minute timer for escalation
+      let countdownInterval; // For updating the countdown display
+      
+      // Event listeners for SOS button (long press)
+      sosButton.addEventListener('mousedown', startSosTimer);
+      sosButton.addEventListener('touchstart', startSosTimer);
+      sosButton.addEventListener('mouseup', cancelSosTimer);
+      sosButton.addEventListener('mouseleave', cancelSosTimer);
+      sosButton.addEventListener('touchend', cancelSosTimer);
+      
+      function startSosTimer() {
+        pressTimer = window.setTimeout(() => { activateSos(); }, 3000);
+      }
+      
+      function cancelSosTimer() {
+        if (pressTimer) { window.clearTimeout(pressTimer); }
+      }
+      
+      function activateSos() {
         if (!isSosActive) {
-            isSosActive = true;
-            sosButton.classList.add('active');
-            emergencyModal.style.display = 'block';
-            
-            // Use Geolocation API to fetch live location and generate dynamic map link
-            setTimeout(() => {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition((position) => {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
-                        // Dynamic Google Maps link
-                        const dynamicLink = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-                        document.getElementById('locationStatus').innerHTML = 
-                            `<i class="fas fa-check-circle"></i> Location shared: <a href="${dynamicLink}" target="_blank">Your Live Location</a>`;
-                    }, (error) => {
-                        console.error("Error getting location: ", error);
-                        document.getElementById('locationStatus').innerHTML = 
-                            `<i class="fas fa-exclamation-triangle"></i> Unable to get live location.`;
-                    });
-                } else {
-                    document.getElementById('locationStatus').innerHTML = 
-                        `<i class="fas fa-exclamation-triangle"></i> Geolocation not supported.`;
-                }
-            }, 2000);
-            
-            console.log('SOS ACTIVATED - Sending alerts...');
+          isSosActive = true;
+          sosButton.classList.add('active');
+          emergencyModal.style.display = 'flex';
+          
+          // Start the countdown timer (60 seconds)
+          let remainingTime = 60;
+          countdownTimerElem.textContent = remainingTime;
+          countdownInterval = setInterval(() => {
+            remainingTime--;
+            countdownTimerElem.textContent = remainingTime;
+            if (remainingTime <= 0) {
+              clearInterval(countdownInterval);
+            }
+          }, 1000);
+          
+          // Fetch live location using Geolocation API
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+              const lat = position.coords.latitude;
+              const lng = position.coords.longitude;
+              dynamicLink = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+              document.getElementById('locationStatus').innerHTML =
+                `<i class="fas fa-check-circle"></i> Location ready: <a href="${dynamicLink}" target="_blank" rel="noopener noreferrer">View Live Location</a>`;
+              
+              // Set a 1-minute timer before alerting the trusted contact
+              trustedAlertTimer = setTimeout(() => {
+                window.location.href = `tel:${trustedContactPhone}`;
+                window.open(`mailto:${trustedContactEmail}?subject=SOS Alert&body=Alert! My current location is: ${dynamicLink}`, '_blank');
+                alert("Alert sent to your trusted contact.");
+              }, 60000); // 1 minute
+              
+              // Set a 5-minute escalation timer if no response from trusted contact
+              escalationTimer = setTimeout(() => {
+                window.location.href = `tel:${policePhone}`;
+                window.open(`mailto:${policeEmail}?subject=SOS Alert - No Response&body=No response received. My location is: ${dynamicLink}`, '_blank');
+                // Additionally call the women safety helpline
+                window.location.href = `tel:${womenSafetyHelpline}`;
+                alert("No response from trusted contact. Alert escalated to police and women safety helpline.");
+              }, 300000); // 5 minutes
+              
+            }, (error) => {
+              console.error("Error getting location:", error);
+              document.getElementById('locationStatus').innerHTML =
+                `<i class="fas fa-exclamation-triangle"></i> Unable to get live location.`;
+            });
+          } else {
+            document.getElementById('locationStatus').innerHTML =
+              `<i class="fas fa-exclamation-triangle"></i> Geolocation not supported.`;
+          }
+          console.log('SOS ACTIVATED - Waiting for cancellation...');
         }
-    }
-
-    closeModal.addEventListener('click', () => {
+      }
+      
+      // Shake detection: if device is shaken vigorously, activate SOS automatically
+      if (window.DeviceMotionEvent) {
+        let lastUpdate = 0;
+        const shakeThreshold = 15; // Adjust threshold as needed
+        window.addEventListener('devicemotion', (event) => {
+          const acceleration = event.accelerationIncludingGravity;
+          const currentTime = new Date().getTime();
+          if ((currentTime - lastUpdate) > 100) {
+            const speed = Math.abs((acceleration.x || 0) + (acceleration.y || 0) + (acceleration.z || 0));
+            if (speed > shakeThreshold && !isSosActive) {
+              console.log("Shake detected, activating SOS.");
+              activateSos();
+            }
+            lastUpdate = currentTime;
+          }
+        }, false);
+      }
+      
+      // Modal close events (to cancel SOS)
+      closeModal.addEventListener('click', () => {
         emergencyModal.style.display = 'none';
         isSosActive = false;
         sosButton.classList.remove('active');
-    });
-
-    window.addEventListener('click', (event) => {
+        if (trustedAlertTimer) { clearTimeout(trustedAlertTimer); }
+        if (escalationTimer) { clearTimeout(escalationTimer); }
+        if (countdownInterval) { clearInterval(countdownInterval); }
+      });
+      window.addEventListener('click', (event) => {
         if (event.target === emergencyModal) {
-            emergencyModal.style.display = 'none';
-            isSosActive = false;
-            sosButton.classList.remove('active');
+          emergencyModal.style.display = 'none';
+          isSosActive = false;
+          sosButton.classList.remove('active');
+          if (trustedAlertTimer) { clearTimeout(trustedAlertTimer); }
+          if (escalationTimer) { clearTimeout(escalationTimer); }
+          if (countdownInterval) { clearInterval(countdownInterval); }
         }
+      });
+      
+      // Manual emergency contact button handlers
+      document.getElementById('callPolice').addEventListener('click', () => {
+        window.location.href = `tel:${policePhone}`;
+      });
+      document.getElementById('callTrusted1').addEventListener('click', () => {
+        window.location.href = `tel:${trustedContactPhone}`;
+        window.open(`mailto:${trustedContactEmail}?subject=SOS Alert&body=My current location is: ${dynamicLink}`, '_blank');
+      });
+      document.getElementById('callTrusted2').addEventListener('click', () => {
+        window.location.href = `tel:+919876543210`;
+      });
     });
-
-    // Emergency contact buttons
-    document.getElementById('callPolice').addEventListener('click', () => {
-        alert('Calling local police...');
-        // In a real app: window.location.href = 'tel:911';
-    });
-
-    document.getElementById('callTrusted1').addEventListener('click', () => {
-        alert('Calling Trusted Contact 1...');
-    });
-
-    document.getElementById('callTrusted2').addEventListener('click', () => {
-        alert('Calling Trusted Contact 2...');
-    });
-
-    // Contact form submission
-    document.getElementById('contactForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        alert('Thank you for your message! We will get back to you soon.');
-        e.target.reset();
-    });
-
-    // Shake detection for mobile (optional)
-    if (window.DeviceMotionEvent) {
-        let lastUpdate = 0;
-        const threshold = 15; // Shake sensitivity
-        let isShaking = false;
-        
-        window.addEventListener('devicemotion', (e) => {
-            const acceleration = e.accelerationIncludingGravity;
-            const curTime = new Date().getTime();
-            
-            if ((curTime - lastUpdate) > 100) {
-                const diffTime = curTime - lastUpdate;
-                lastUpdate = curTime;
-                
-                const speed = Math.abs(acceleration.x + acceleration.y + acceleration.z - 9.81) * 10000 / diffTime;
-                
-                if (speed > threshold && !isSosActive) {
-                    isShaking = true;
-                    activateSos();
-                }
-            }
-        }, false);
-    }
-</script>
+  </script>
 
 </body>
 </html>
