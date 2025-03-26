@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Guardian Network - SafeWeb</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Google Fonts & Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary: #ff4d6d;
+      --secondary: #ff758f;
+      --dark: #343a40;
+      --light: #f8f9fa;
+      --danger: #dc3545;
+      --success: #28a745;
+      --warning: #ffc107;
+      --info: #17a2b8;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      text-decoration: none;
+    }
+    body {
+      background-color: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+    }
+    header {
+      background-color: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      padding: 1rem 2rem;
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .logo span {
+      color: var(--dark);
+    }
+    .nav-links {
+      display: flex;
+      list-style: none;
+    }
+    .nav-links li {
+      margin-left: 2rem;
+    }
+    .nav-links a {
+      color: var(--dark);
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+   
+    /* Main Guardian Network Section */
+    .guardian-section {
+      max-width: 1200px;
+      margin: 120px auto 2rem; /* add top margin to clear fixed header */
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+    }
+    .guardian-form-container {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .guardian-form-container h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: var(--dark);
+      text-align: center;
+    }
+    .guardian-form-container label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+      font-weight: 500;
+    }
+    .guardian-form-container input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .guardian-form-container button {
+      display: block;
+      width: 100%;
+      padding: 0.6rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .guardian-form-container button:hover {
+      background-color: var(--secondary);
+    }
+    .guardian-list {
+      margin-top: 2rem;
+    }
+    .guardian-entry {
+      background-color: #fafafa;
+      border: 1px solid #eee;
+      border-radius: 5px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    .guardian-entry p {
+      margin-bottom: 0.5rem;
+      color: #555;
+    }
+    .guardian-entry button {
+      background-color: var(--danger);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 0.4rem 0.8rem;
+      cursor: pointer;
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+    }
+    .sorting-container {
+      margin-bottom: 1rem;
+      text-align: right;
+    }
+    .sorting-container select {
+      padding: 0.4rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    /* Suggestion Sidebar */
+    .suggestion-container {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      height: fit-content;
+    }
+    .suggestion-container h3 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: var(--dark);
+      text-align: center;
+    }
+    .suggestion-container p {
+      margin-bottom: 0.5rem;
+      color: #555;
+    }
+    .suggestion-container a {
+      color: var(--primary);
+      font-weight: 500;
+    }
+    .suggestion-container a:hover {
+      color: var(--secondary);
+    }
+    /* Popup Modal for Confirmation */
+    .popup-modal {
+      display: none;
+      position: fixed;
+      z-index: 2001;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.4);
+      justify-content: center;
+      align-items: center;
+    }
+    .popup-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    .popup-content h4 {
+      margin-bottom: 1rem;
+      color: var(--dark);
+    }
+    .popup-content button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 0.6rem 1rem;
+      cursor: pointer;
+    }
+    /* Edit Modal for updating entry */
+    .edit-modal {
+      display: none;
+      position: fixed;
+      z-index: 2002;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.4);
+      justify-content: center;
+      align-items: center;
+    }
+    .edit-modal-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    .edit-modal-content h4 {
+      margin-bottom: 1rem;
+      color: var(--dark);
+      text-align: center;
+    }
+    .edit-modal-content label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+    }
+    .edit-modal-content input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .edit-modal-content button {
+      width: 100%;
+      padding: 0.6rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <nav class="navbar">
+      <a href="#" class="logo">Safe<span>Web</span></a>
+      <ul class="nav-links">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Features</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Guardian Network Main Section -->
+  <section class="guardian-section">
+    <!-- Left Column: Guardian Form & List -->
+    <div>
+      <div class="guardian-form-container">
+        <h2>Guardian Network</h2>
+        <form id="guardianForm">
+          <label for="userName">Your Name:</label>
+          <input type="text" id="userName" required>
+          <label for="trustName">Trusted Person Name:</label>
+          <input type="text" id="trustName" required>
+          <label for="trustPhone">Trusted Person Phone:</label>
+          <input type="tel" id="trustPhone" required>
+          <label for="trustEmail">Trusted Person Email:</label>
+          <input type="email" id="trustEmail" required>
+          <label for="trustRelation">Relation (e.g., Friend, Family):</label>
+          <input type="text" id="trustRelation" required>
+          <button type="submit">Save Guardian</button>
+        </form>
+      </div>
+      <div class="sorting-container">
+        <label for="sortSelect">Sort by:</label>
+        <select id="sortSelect">
+          <option value="none">None</option>
+          <option value="name">Trusted Person Name</option>
+          <option value="relation">Relation</option>
+        </select>
+      </div>
+      <div class="guardian-list" id="trustList"></div>
+    </div>
+
+    <!-- Right Column: Quick Emergency Contacts & Suggestions -->
+    <div class="suggestion-container">
+      <h3>Emergency Quick Contacts</h3>
+      <p>Police: <a href="tel:100">100</a></p>
+      <p>Women Safety Helpline: <a href="tel:1091">1091</a></p>
+      <p>Local Doctor: <a href="tel:+911234567890">+91 1234567890</a></p>
+      <hr>
+      <h3>Safety Tips</h3>
+      <p>- Keep your phone charged at all times.</p>
+      <p>- Share your live location with a trusted contact.</p>
+      <p>- Avoid isolated areas during late hours.</p>
+    </div>
+  </section>
+
+  <!-- Popup Modal: Confirmation -->
+  <div class="popup-modal" id="popupModal">
+    <div class="popup-content">
+      <h4>Data Updated Successfully!</h4>
+      <p>Your Guardian Network data has been saved.</p>
+      <button id="closePopupBtn">OK</button>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="edit-modal" id="editModal">
+    <div class="edit-modal-content">
+      <h4>Edit Guardian Entry</h4>
+      <form id="editForm">
+        <input type="hidden" id="editIndex">
+        <label for="editUserName">Your Name:</label>
+        <input type="text" id="editUserName" required>
+        <label for="editTrustName">Trusted Person Name:</label>
+        <input type="text" id="editTrustName" required>
+        <label for="editTrustPhone">Trusted Person Phone:</label>
+        <input type="tel" id="editTrustPhone" required>
+        <label for="editTrustEmail">Trusted Person Email:</label>
+        <input type="email" id="editTrustEmail" required>
+        <label for="editTrustRelation">Relation:</label>
+        <input type="text" id="editTrustRelation" required>
+        <button type="submit">Update Guardian</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <ul class="footer-links">
+      <li><a href="#">Privacy Policy</a></li>
+      <li><a href="#">Terms of Service</a></li>
+      <li><a href="#">FAQ</a></li>
+      <li><a href="#">About Us</a></li>
+    </ul>
+    <p>&copy; 2023 SafeWeb. All rights reserved.</p>
+  </footer>
+  <script>
+    // Guardian Network Logic
+    const guardianForm = document.getElementById('guardianForm');
+    const trustList = document.getElementById('trustList');
+    const sortSelect = document.getElementById('sortSelect');
+    let guardians = JSON.parse(localStorage.getItem('guardians')) || [];
+
+    // Display guardians on page load
+    displayGuardians();
+
+    guardianForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newGuardian = {
+        userName: document.getElementById('userName').value,
+        trustName: document.getElementById('trustName').value,
+        trustPhone: document.getElementById('trustPhone').value,
+        trustEmail: document.getElementById('trustEmail').value,
+        trustRelation: document.getElementById('trustRelation').value
+      };
+      guardians.push(newGuardian);
+      localStorage.setItem('guardians', JSON.stringify(guardians));
+      guardianForm.reset();
+      displayGuardians();
+      showPopup();
+    });
+
+    sortSelect.addEventListener('change', () => {
+      const criterion = sortSelect.value;
+      if (criterion === 'name') {
+        guardians.sort((a, b) => a.trustName.localeCompare(b.trustName));
+      } else if (criterion === 'relation') {
+        guardians.sort((a, b) => a.trustRelation.localeCompare(b.trustRelation));
+      }
+      displayGuardians();
+    });
+
+    function displayGuardians() {
+      trustList.innerHTML = '';
+      guardians.forEach((g, index) => {
+        const div = document.createElement('div');
+        div.className = 'guardian-entry';
+        div.innerHTML = `
+          <p><strong>User Name:</strong> ${g.userName}</p>
+          <p><strong>Trusted Person:</strong> ${g.trustName} (${g.trustRelation})</p>
+          <p><strong>Phone:</strong> ${g.trustPhone}</p>
+          <p><strong>Email:</strong> ${g.trustEmail}</p>
+          <button onclick="editGuardian(${index})">Edit</button>
+          <button onclick="removeGuardian(${index})" style="right: 100px;">Remove</button>
+        `;
+        trustList.appendChild(div);
+      });
+    }
+
+    function removeGuardian(index) {
+      guardians.splice(index, 1);
+      localStorage.setItem('guardians', JSON.stringify(guardians));
+      displayGuardians();
+    }
+    window.removeGuardian = removeGuardian;
+
+    // Popup Modal Logic
+    const popupModal = document.getElementById('popupModal');
+    const closePopupBtn = document.getElementById('closePopupBtn');
+    function showPopup() {
+      popupModal.style.display = 'flex';
+    }
+    closePopupBtn.addEventListener('click', () => {
+      popupModal.style.display = 'none';
+    });
+    window.addEventListener('click', (event) => {
+      if (event.target === popupModal) {
+        popupModal.style.display = 'none';
+      }
+    });
+
+    // Edit Modal Logic
+    const editModal = document.getElementById('editModal');
+    const editForm = document.getElementById('editForm');
+    function editGuardian(index) {
+      const guardian = guardians[index];
+      document.getElementById('editIndex').value = index;
+      document.getElementById('editUserName').value = guardian.userName;
+      document.getElementById('editTrustName').value = guardian.trustName;
+      document.getElementById('editTrustPhone').value = guardian.trustPhone;
+      document.getElementById('editTrustEmail').value = guardian.trustEmail;
+      document.getElementById('editTrustRelation').value = guardian.trustRelation;
+      editModal.style.display = 'flex';
+    }
+    editForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const index = document.getElementById('editIndex').value;
+      guardians[index] = {
+        userName: document.getElementById('editUserName').value,
+        trustName: document.getElementById('editTrustName').value,
+        trustPhone: document.getElementById('editTrustPhone').value,
+        trustEmail: document.getElementById('editTrustEmail').value,
+        trustRelation: document.getElementById('editTrustRelation').value
+      };
+      localStorage.setItem('guardians', JSON.stringify(guardians));
+      editModal.style.display = 'none';
+      displayGuardians();
+      showPopup();
+    });
+    window.addEventListener('click', (e) => {
+      if (e.target === editModal) {
+        editModal.style.display = 'none';
+      }
+    });
+  </script>
+
+  <!-- Edit Modal Markup (Hidden by default) -->
+  <div class="edit-modal" id="editModal">
+    <div class="edit-modal-content">
+      <h4>Edit Guardian Entry</h4>
+      <form id="editForm">
+        <input type="hidden" id="editIndex">
+        <label for="editUserName">Your Name:</label>
+        <input type="text" id="editUserName" required>
+        <label for="editTrustName">Trusted Person Name:</label>
+        <input type="text" id="editTrustName" required>
+        <label for="editTrustPhone">Trusted Person Phone:</label>
+        <input type="tel" id="editTrustPhone" required>
+        <label for="editTrustEmail">Trusted Person Email:</label>
+        <input type="email" id="editTrustEmail" required>
+        <label for="editTrustRelation">Relation:</label>
+        <input type="text" id="editTrustRelation" required>
+        <button type="submit">Update Guardian</button>
+      </form>
+    </div>
+  </div>
+
+</body>
+</html>
